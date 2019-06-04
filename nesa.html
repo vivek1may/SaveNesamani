@@ -1,0 +1,481 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Save Nesamani</title>
+<body background='images/bg_img.jpg'>
+
+        <div class="row" >
+            <div class="col s1 m1 l1 xl1 ">
+              </div>
+                <div class="col s3 m3 l4 xl4 ">
+                  <!-- Promo Content 1 goes here -->
+                  <h5> <i>You can user either Arrow keys (Left & Right) or the buttons in the bottom. </i></h5>
+                  <a href="#!" onclick="restart()" class="modal-close waves-effect waves-light btn"> Restart </a>
+                </div>
+                <div id ="pixi_app" class="col s5 m5 l3 xl3">
+
+                  <!-- Promo Content 2 goes here -->
+                </div>
+                <div class="col s1 m1 l1 xl1">
+
+                </div>
+                <div class="col s2 m2 l3 xl3">
+                  <!-- Promo Content 3 goes here -->
+                  <b>Connect me </b>
+                  <p><u><a href="http://fb.com/vivek1may">Vivek@fb</a></u></p>
+                  <p><u><a href="https://www.linkedin.com/in/vivek1may/">Vivek@linkedIn</a></u></p>
+                </div>
+          
+        </div>
+        <div class = "row">
+            <div class="col s4 s4 m5 l5 xl5"">
+
+              </div>
+              <div class="col s4 m4 l3 xl3">
+                  <a ontouchstart="move_left_press()" ontouchend="move_left_release()" onmousedown="move_left_press()" onmouseup="move_left_release()" class=" col s6 waves-effect waves-light  btn-large ">LEFT <-- </a>
+                  <a ontouchstart="move_right_press()" ontouchend="move_right_release()" onmousedown="move_right_press()" onmouseup="move_right_release()" class="col s6 waves-effect waves-light btn-large">-->RIGHT</a>
+                <!-- Promo Content 2 goes here -->
+              </div>
+
+              <div class="col s4 m4 l4 xl4">
+
+              </div>
+        </div>
+
+<!-- Compiled and minified CSS -->
+<link rel="stylesheet" async ='false' href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+<!-- Compiled and minified JavaScript -->
+<script async='false' src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+             
+
+  
+<script src="pixi/pixi.min.js"></script>
+<script>
+
+  //Modal window 
+  let points = 0;
+  var elems = null;
+  let instance =null;
+  let instance1 = null; 
+  document.addEventListener('DOMContentLoaded', function() {
+    elems = document.querySelectorAll('.modal');
+    var instances = M.Modal.init(elems, null);
+     instance = M.Modal.getInstance(elems[0]);
+     instance1 = M.Modal.getInstance(elems[1]);
+     
+  });
+
+
+
+//Aliases
+let Application = PIXI.Application,
+    Container = PIXI.Container,
+    loader = PIXI.loader,
+    resources = PIXI.loader.resources,
+    Graphics = PIXI.Graphics,
+    TextureCache = PIXI.utils.TextureCache,
+    Sprite = PIXI.Sprite,
+    Text = PIXI.Text,
+    TextStyle = PIXI.TextStyle;
+
+let app_width = document.getElementById('pixi_app').clientWidth;
+let app_height = window.innerHeight * .9;
+
+//Create a Pixi Application
+let app = new Application({
+    
+    width: app_width, 
+    height: app_height,                       
+    antialiasing: true, 
+    transparent: false, 
+    resolution: 1
+  }
+);
+
+
+//Add the canvas that Pixi automatically created for you to the HTML document
+//document.body.appendChild(app.view);
+document.getElementById("pixi_app").appendChild(app.view);
+loader
+  .add("images/Nesamani.PNG")
+  .load(setup);
+
+//Define any variables that are used in more than one function
+let cat, box, message, state, hammer,hammer1;
+let speedster = 0;
+    if (window.innerHeight > window.innerWidth){
+      console.log(" Mobile device");
+      speester = 10;
+    }
+function throw_hammer(hm){
+    points = points + 1;
+    
+
+    if (points >= 100) {
+      instance1.open();
+      state = stop;
+    }
+
+    //Sudden attach 
+    if(points % 2 ==0 && hammer2.y > app_height){
+      //throw the hammer 3
+      hammer2.y =1;
+      //hammer2.x = cat.x;
+      hammer2.x = Math.floor(Math.random() * app_width);
+      hammer2.vy =speedster + ((10+parseInt(points/10)) + Math.floor(Math.random() * 6));
+      console.log("hammer2 y " + hammer2.y);
+    }
+
+    if(hm =="hammer"){
+        hammer.x = Math.floor(Math.random() * app_width);
+        hammer.y =1;
+        hammer.vy =speedster + (5 + Math.floor(Math.random() * 5));
+    }
+    if (hm == "hammer1"){
+        
+        hammer1.x = Math.floor(Math.random()  * app_width);
+        hammer1.y =1;
+        hammer1.vy = speedster + (5 + Math.floor(Math.random() * 5));
+    }
+}
+
+
+  //Left arrow key `press` method
+    //Capture the keyboard arrow keys
+    let left = keyboard(37),
+      right = keyboard(39);
+  function move_left_press(){
+       //Change the cat's velocity when the key is pressed
+      cat.vx = -5;
+      console.log("cat moving left");
+      console.log(cat.x);
+      cat.vy = 0;
+  }
+
+  function move_left_release(){
+    //If the left arrow has been released, and the right arrow isn't down,
+    //and the cat isn't moving vertically:
+    //Stop the cat
+    if (!right.isDown && cat.vy === 0) {
+      cat.vx = 0;
+    }
+  }
+
+    function move_right_press(){
+    cat.vx = 5;
+    cat.vy = 0;
+  }
+
+  function move_right_release(){
+    if (!left.isDown && cat.vy === 0) {
+      cat.vx = 0;
+    }
+  }
+
+
+
+function setup() {
+
+  //Create the box
+  box = new PIXI.Graphics();
+  box.beginFill(0xCCFF99);
+  box.drawRect(0, 0, 64, 64);
+  box.endFill();
+  box.x = 120;
+  box.y = 96;
+  //app.stage.addChild(box);
+
+  //Create the `cat` sprite 
+  //cat = new Sprite(resources["images/Nesamani.png"].texture);
+  cat = new PIXI.Sprite.from('images/Nesamani.png');
+  cat.x = 50;
+  cat.y = app_height *.9; 
+  cat.vx = 0;
+  cat.vy = 0;
+  app.stage.addChild(cat);
+
+  //create the `hammer' sprite
+  hammer =  new PIXI.Sprite.from('images/Hammer.png');
+  hammer.x = 10;
+  hammer.y = 0;
+  hammer.vx = 0;
+  hammer.vy =3;
+  app.stage.addChild(hammer);
+
+  hammer1 =  new PIXI.Sprite.from('images/Hammer.png');
+  hammer1.x = 60;
+  hammer1.y = 0;
+  hammer1.vx = 0;
+  hammer1.vy =4;
+  app.stage.addChild(hammer1);
+
+  hammer2 =  new PIXI.Sprite.from('images/Hammer.png');
+  hammer2.x = -80;
+  hammer2.y = 0;
+  hammer2.vx = 0;
+  hammer2.vy =0;
+  app.stage.addChild(hammer1);
+
+
+
+
+
+  left.press = function() {
+    move_left_press();
+ 
+  };
+
+  //Left arrow key `release` method
+  left.release = function() {
+
+    move_left_release();
+  };
+
+
+
+  //Right
+  right.press = function() {
+    move_right_press()
+  };
+  right.release = function() {
+    move_right_release();
+  };
+
+
+
+  //Create the text sprite
+  let style = new TextStyle({
+    fontFamily: "sans-serif",
+    fontSize: 18,
+    fill: "white",
+  }); 
+  message = new Text("Saved "  + points +" hammers", style);
+  message.position.set(8, 8);
+  app.stage.addChild(message);
+
+  //Set the game state
+  state = play;
+ 
+  //Start the game loop 
+  app.ticker.add(delta => gameLoop(delta));
+}
+
+
+function gameLoop(delta){
+
+  //Update the current game state:
+  state(delta);
+}
+  // Restart funtion 
+  function restart(){
+    state = play;
+    points = 0;
+    cat.x = 50;
+    cat.y = app_height *.9; 
+    cat.vx = 0;
+    cat.vy = 0;
+    
+
+    hammer.x = 10;
+    hammer.y = 0;
+    hammer.vx = 0;
+    hammer.vy =3;
+
+    hammer1.x = 60;
+    hammer1.y = 0;
+    hammer1.vx = 0;
+    hammer1.vy =4;
+
+    hammer2.x = -80;
+    hammer2.y = 0;
+    hammer2.vx = 0;
+    hammer2.vy =0;
+    
+  }
+
+
+function play(delta) {
+
+  //use the cat's velocity to make it move
+  if(cat.vx <0 && cat.x >5){
+      cat.x += cat.vx;
+  }
+  if(cat.x < app_width-30 && cat.vx >0){
+    cat.x += cat.vx;
+  }
+  
+  //cat.y += cat.vy;
+
+  //Hammer velocity 
+  
+  hammer.y += hammer.vy;
+  hammer1.y += hammer1.vy;
+  hammer2.y += hammer2.vy;
+
+  //Check hammer crossed the ella koodu :-p 
+  if (hammer.y >= app_height+100){
+      throw_hammer("hammer");
+  }
+  if (hammer1.y >= app_height+100){
+      throw_hammer("hammer1");
+  }
+   
+  //console.log("play function");
+  //check for a collision between the cat and the box
+  if (hitTestRectangle(cat, box)) {
+
+    //if there's a collision, change the message text
+    //and tint the box red
+    message.text = "TUNG !!!!";
+    box.tint = 0xff3300;
+  } else {
+
+    //if there's no collision, reset the message
+    //text and the box's color
+    message.text = "Saved " + points + " hammers ! ";
+    box.tint = 0xccff99;
+  }
+
+  if (hitTestRectangle(cat,hammer) || hitTestRectangle(cat,hammer1) ||  hitTestRectangle(cat,hammer2)){
+    instance.open();
+    state = stop;
+    console.log("hammer2",hammer2.x,hammer2.y);
+    console.log("hammer1",hammer1.x,hammer1.y);
+    console.log("hammer",hammer.x,hammer.y);
+    console.log("cat",cat.x,cat.y);
+    //alert("Game over");
+  }
+}
+
+//The `hitTestRectangle` function
+function hitTestRectangle(r1, r2) {
+
+  //Define the variables we'll need to calculate
+  let hit, combinedHalfWidths, combinedHalfHeights, vx, vy;
+
+  //hit will determine whether there's a collision
+  hit = false;
+
+  //Find the center points of each sprite
+  r1.centerX = r1.x + r1.width / 2; 
+  r1.centerY = r1.y + r1.height / 2; 
+  r2.centerX = r2.x + r2.width / 2; 
+  r2.centerY = r2.y + r2.height / 2; 
+
+  //Find the half-widths and half-heights of each sprite
+  r1.halfWidth = r1.width / 2;
+  r1.halfHeight = r1.height / 2;
+  r2.halfWidth = r2.width / 2;
+  r2.halfHeight = r2.height / 2;
+
+  //Calculate the distance vector between the sprites
+  vx = r1.centerX - r2.centerX;
+  vy = r1.centerY - r2.centerY;
+
+  //Figure out the combined half-widths and half-heights
+  combinedHalfWidths = r1.halfWidth + r2.halfWidth;
+  combinedHalfHeights = r1.halfHeight + r2.halfHeight;
+
+  //Check for a collision on the x axis
+  if (Math.abs(vx) < combinedHalfWidths) {
+
+    //A collision might be occuring. Check for a collision on the y axis
+    if (Math.abs(vy) < combinedHalfHeights) {
+
+      //There's definitely a collision happening
+      console.log("hit hammer ",r2.x)
+      hit = true;
+    } else {
+
+      //There's no collision on the y axis
+      hit = false;
+    }
+  } else {
+
+    //There's no collision on the x axis
+    hit = false;
+  }
+
+  //`hit` will be either `true` or `false`
+  return hit;
+};
+
+
+//The `keyboard` helper function
+function keyboard(keyCode) {
+  let key = {};
+  key.code = keyCode;
+  key.isDown = false;
+  key.isUp = true;
+  key.press = undefined;
+  key.release = undefined;
+
+  //The `downHandler`
+  key.downHandler = function(event) {
+    if (event.keyCode === key.code) {
+      if (key.isUp && key.press) key.press();
+      key.isDown = true;
+      key.isUp = false;
+    }
+    event.preventDefault();
+  };
+
+  //The `upHandler`
+  key.upHandler = function(event) {
+    if (event.keyCode === key.code) {
+      if (key.isDown && key.release) key.release();
+      key.isDown = false;
+      key.isUp = true;
+    }
+    event.preventDefault();
+  };
+
+  //Attach event listeners
+  window.addEventListener(
+    "keydown", key.downHandler.bind(key), false
+  );
+  window.addEventListener(
+    "keyup", key.upHandler.bind(key), false
+  );
+  return key;
+}
+// document.onload() = function(){
+// console.log("div height");
+// console.log(document.getElementById('pixi_app').clientHeight); 
+// }
+
+
+
+document.getElementById("pixi_app").focus();
+
+  
+</script>
+
+
+<!-- Modal Trigger -->
+
+<!-- Modal Structure -->
+<div id="modal1" class="modal">
+  <div class="modal-content">
+    <h4>TUNG !!!!!!!!!</h4>
+    <p>Oh No ! You failed to save Contractor Nesamani !!!!</p>
+  </div>
+  <div class="modal-footer">
+      <a href="#!" onclick="restart()" class="modal-close waves-effect waves-light btn "> Restart </a>
+      <a href="#!" class="modal-close waves-effect waves-light btn "> No Thanks </a>
+  </div>
+</div>
+<div id="modal2" class="modal">
+    <div class="modal-content">
+      <h4>Contractor Nesamani Saved !!!</h4>
+      <p> You are appointed as apparacentee :) </p>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" onclick="restart()" class="modal-close waves-effect waves-light btn"> Restart </a>
+        <a href="#!" class="modal-close waves-effect waves-light btn "> No Thanks </a>
+    
+    </div>
+  </div>
+
+</body>
+
